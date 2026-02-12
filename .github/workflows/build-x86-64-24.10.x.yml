@@ -76,6 +76,23 @@ jobs:
           echo "您设置的路由器管理地址是:${{ github.event.inputs.custom_router_ip }}"
           # 后续步骤会将该文件映射到路由器/etc/config/custom_router_ip.txt 以便用于开机脚本99-custom.sh读取用户设置的ip
       
+      - name: Set root password for OpenWrt (from workflow input)
+        run: |
+          # 读取on环节填写的root密码（触发界面输入的值）
+          ROOT_PWD="${{ github.event.inputs.root_password }}"
+          mkdir -p "${{ github.workspace }}/files/etc"
+          
+          if [ -n "$ROOT_PWD" ]; then
+            # 生成密码哈希并写入固件的shadow文件
+            PASSWORD_HASH=$(echo -n "$ROOT_PWD" | mkpasswd -m sha-512 -s)
+            echo "root:$PASSWORD_HASH:19700:0:99999:7:::" > "${{ github.workspace }}/files/etc/shadow"
+            echo "✅ 已设置root密码为: $ROOT_PWD"
+          else
+            # 留空则设置无密码
+            echo "root::19700:0:99999:7:::" > "${{ github.workspace }}/files/etc/shadow"
+            echo "ℹ️ 未设置root密码（空密码）"
+          fi
+      
       - name: Validate PPPoE Inputs
         run: |
           if [[ "${{ inputs.enable_pppoe }}" == "yes" ]]; then
