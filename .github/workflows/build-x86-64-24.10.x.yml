@@ -18,11 +18,11 @@ on:
       custom_router_ip:
         description: "请设置路由器的管理地址(仅对多网口路由器有效) 格式:192.168.x.1 或 10.x.x.1"
         required: true
-        default: "192.168.100.1"
+        default: "192.168.11.1"
       profile:
         description: '请输入要编译固件大小 单位(MB)'
         required: true
-        default: '1024'
+        default: '3072'
       enable_store:
         description: "集成 store 商店"
         required: false
@@ -120,7 +120,7 @@ jobs:
           
           - 🏠 **后台地址**: ${{ github.event.inputs.custom_router_ip }}
           - 👤 **用户名**: root
-          - 🔑 **密码**: 无
+          - 🔑 **密码**: paUL19821221
           EOF
 
           if [ "${{ github.event.inputs.include_docker }}" == "yes" ]; then
